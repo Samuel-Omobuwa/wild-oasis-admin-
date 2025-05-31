@@ -34,6 +34,7 @@ function CabinTable() {
   });
 
 if (isLoading) return <Spinner />
+if (error) return <ErrorFallbak />
   
 
   return <div>Table</div>;
