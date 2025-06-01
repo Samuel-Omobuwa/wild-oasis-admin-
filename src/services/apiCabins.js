@@ -1,3 +1,4 @@
+import { data } from "react-router-dom";
 import supabase from "./supabase";
 
 export default async function getCabins() {
@@ -12,4 +13,20 @@ export default async function getCabins() {
     
   }
   return data;
+}
+
+export async function DeleteCabin (id) {
+
+const { error } = await supabase
+  .from('cabin')
+  .delete()
+  .eq('id', id)
+
+    
+  if (error) {
+    console.error(error);
+    throw new Error("Cabins could not be deleted");
+  }
+
+ return data;
 }
