@@ -8,25 +8,33 @@ export default async function getCabins() {
     console.error(error);
     throw new Error("Cabins could not be loaded");
   }
-  if(data){
+  if (data) {
     console.log(data);
-    
   }
   return data;
 }
 
-export async function DeleteCabin (id) {
+export async function createCabin(newCabin) {
+  const { data, error } = await supabase
+    .from("cabin")
+    .insert([newCabin])
+    .select();
 
-const { error } = await supabase
-  .from('cabin')
-  .delete()
-  .eq('id', id)
+  if (error) {
+    console.error(error);
+    throw new Error("Cabins could not be created");
+  }
 
-    
+  return data;
+}
+
+export async function DeleteCabin(id) {
+  const { error } = await supabase.from("cabin").delete().eq("id", id);
+
   if (error) {
     console.error(error);
     throw new Error("Cabins could not be deleted");
   }
 
- return data;
+  return data;
 }

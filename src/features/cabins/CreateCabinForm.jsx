@@ -6,6 +6,9 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { createCabin } from "../../services/apiCabins";
 
 const FormRow = styled.div`
   display: grid;
@@ -44,18 +47,29 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const {register, handleSubmit} = useForm()
+  const { register, handleSubmit, reset } = useForm();
+  const queryClient = useQueryClient();
 
-  function onSubmit (data) {
-    console.log(data)
+  const { mutate, isLoading: isCreating } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success("New cabin successfully created");
+      queryClient.invalidateQueries({ queryKey: ["cabin"] });
+      reset();
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
+  function onSubmit(data) {
+    mutate(data);
+    console.log(data);
   }
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name"{...register("name")} />
+        <Input type="text" id="name" {...register("name")} />
       </FormRow>
 
       <FormRow>
@@ -74,7 +88,9 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow>
-        <Label htmlFor="description" {...register("description")}>Description for website</Label>
+        <Label htmlFor="description" {...register("description")}>
+          Description for website
+        </Label>
         <Textarea type="number" id="description" defaultValue="" />
       </FormRow>
 
@@ -88,7 +104,7 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit cabin</Button>
+        <Button disabled={isCreating}>Add cabin</Button>
       </FormRow>
     </Form>
   );
