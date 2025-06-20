@@ -47,7 +47,7 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, getValues } = useForm();
   const queryClient = useQueryClient();
 
   const { mutate, isLoading: isCreating } = useMutation({
@@ -80,17 +80,33 @@ function CreateCabinForm() {
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity", {requied: 'This field is required' })} />
+        <Input type="number" id="maxCapacity" {...register("maxCapacity", 
+        {requied: 'This field is required',
+          min: {
+            value: 1,
+            message: 'Capacity must be at least 1'
+          }
+         })} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice", {requied: 'This field is required' })} />
+        <Input type="number" id="regularPrice" {...register("regularPrice", {requied: 'This field is required', 
+           min: {
+            value: 1,
+            message: 'Capacity must be at least 1'
+          }
+         })} />
       </FormRow>
 
       <FormRow>
         <Label htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} {...register("discount", {requied: 'This field is required' })}  />
+        <Input type="number" id="discount" defaultValue={0} {...register("discount", {requied: 'This field is required', 
+           min: {
+            value: 1,
+            validate: (value) => value <= getValues().regularPrice || 'Discount should be be less than the regular price'
+          }
+         })}  />
       </FormRow>
 
       <FormRow>
