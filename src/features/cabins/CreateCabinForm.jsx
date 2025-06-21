@@ -47,7 +47,9 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const { register, handleSubmit, reset, getValues } = useForm();
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
+  const { errors } = formState;
+  console.log(errors);
   const queryClient = useQueryClient();
 
   const { mutate, isLoading: isCreating } = useMutation({
@@ -66,54 +68,66 @@ function CreateCabinForm() {
   }
 
   function onError(errors) {
-    console.error(errors)
+    console.error(errors);
   }
 
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
-      <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" {...register("name",
-          {requied: 'This field is required' }
-        )} />
+      <FormRow label="Cabin name" error={errors?.name?.message}>
+        <Input
+          type="text"
+          id="name"
+          {...register("name", { required: "This field is required" })}
+        />
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity", 
-        {requied: 'This field is required',
-          min: {
-            value: 1,
-            message: 'Capacity must be at least 1'
-          }
-         })} />
+      <FormRow label="maximum Capacity" error={errors?.maxCapacity?.message}>
+        <Input type="number" id="maxCapacity" disabled={isCreating} />
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice", {requied: 'This field is required', 
-           min: {
-            value: 1,
-            message: 'Capacity must be at least 1'
-          }
-         })} />
+      <FormRow label="Regular price" error={errors?.regularPrice?.message}>
+        <Input
+          type="number"
+          id="regularPrice"
+          disabled={isCreating}
+          {...register("regularPrice", {
+            requied: "This field is required",
+            min: {
+              value: 1,
+              message: "Capacity must be at least 1",
+            },
+          })}
+        />
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} {...register("discount", {requied: 'This field is required', 
-           min: {
-            value: 1,
-            validate: (value) => value <= getValues().regularPrice || 'Discount should be be less than the regular price'
-          }
-         })}  />
+      <FormRow label="discount" error={errors?.discount?.message}>
+        <Input
+          type="number"
+          id="discount"
+          defaultValue={0}
+          {...register("discount", {
+            requied: "This field is required",
+            min: {
+              value: 1,
+              validate: (value) =>
+                value <= getValues().regularPrice ||
+                "Discount should be be less than the regular price",
+            },
+          })}
+        />
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="description" >
-          Description for website
-        </Label>
-        <Textarea type="number" id="description" defaultValue="" {...register("description", {required: 'This field is required'})}/>
+      <FormRow
+        label="Description for website"
+        error={errors?.description?.message}
+        disabled={isCreating}
+      >
+        <Textarea
+          type="number"
+          id="description"
+          defaultValue=""
+          {...register("description", { required: "This field is required" })}
+        />
       </FormRow>
 
       <FormRow>
